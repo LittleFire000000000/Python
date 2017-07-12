@@ -83,7 +83,7 @@ def crown_jewel_aks_test(x: int, *coprimes: [int]) -> bool :
     :return: prime or not
     """
     for y in coprimes :
-        if pow(y - 1, x, x) != 0 :
+        if pow((pow(y - 1, x) - pow(y, x) + 1), 1, p) != 0 :
             return False
     return True
 
