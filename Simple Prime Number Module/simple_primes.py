@@ -95,7 +95,7 @@ def crown_jewel_aks_test(x: int, *coprimes: [int]) -> bool :
         # (x (mod n) - y (mod n) ) (mod n) = (x - y) (mod n)
         # (x (mod n) + y (mod n) ) (mod n) = (x + y) (mod n)
         # AKS Test: if ( (y - 1 ) ** x - ( y ** x - 1 ) ) divides x, x is prime (if y is a coprime of x).
-        if pow((pow(y - 1, x) - pow(y, x) + 1), 1, x) != 0 :
+        if pow(abs(pow(y - 1, x) - pow(y, x) + 1), 1, x) != 0 :
             return False
     return True
 
