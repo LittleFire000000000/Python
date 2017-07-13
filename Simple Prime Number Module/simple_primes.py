@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from math import sqrt, ceil, log, floor
+from math import sqrt, log, floor, ceil
 from secrets import randbelow, randbits
 
 
@@ -75,6 +75,15 @@ def generate_possible_prime_under(limit: int) -> int :
             return tmp
 
 
+def generate_possible_prime_next(x: int) -> int :
+    """
+    Take a previous (disproven) natural prime candidate x and get another close one to try.
+    :param x: a natural prime candidate
+    :return: a natural prime candidate
+    """
+    return (int(ceil(x / 6)) + (1 if randbits(1) else 2)) * 6 + (-1 if randbits(1) else 1)
+
+
 def crown_jewel_aks_test(x: int, *coprimes: [int]) -> bool :
     """
     Tell if x is a prime via the AKS Test (optimized).
@@ -83,7 +92,10 @@ def crown_jewel_aks_test(x: int, *coprimes: [int]) -> bool :
     :return: prime or not
     """
     for y in coprimes :
-        if pow((pow(y - 1, x) - pow(y, x) + 1), 1, p) != 0 :
+        # (x (mod n) - y (mod n) ) (mod n) = (x - y) (mod n)
+        # (x (mod n) + y (mod n) ) (mod n) = (x + y) (mod n)
+        # AKS Test: if ( (y - 1 ) ** x - ( y ** x - 1 ) ) divides x, x is prime (if y is a coprime of x).
+        if pow((pow(y - 1, x) - pow(y, x) + 1), 1, x) != 0 :
             return False
     return True
 
