@@ -1,0 +1,1 @@
+I wrote these to make programming in Python easier for myself.
