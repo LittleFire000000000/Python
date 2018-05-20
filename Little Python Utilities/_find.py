@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 from os import chdir, walk, getcwd
 from os.path import isdir, abspath, join
+from sys import stderr
 
 def listdir(pt):
-	for x,_,z in walk(pt):
-		for y in z:
-			yield join(x, y)
+    for x,_,z in walk(pt):
+        for y in z:
+            yield join(x, y)
 
 d0 = getcwd()
 
@@ -25,8 +26,8 @@ try:
     print()
     for a in listdir(d):
         if not isdir(a):
-            with open(a) as b:
-                try:
+            try:
+                with open(a) as b:
                     c = b.read()
                     if c != '':
                         if ((txt.lower() in c.lower()) if not caseSence else (txt in c)):
@@ -37,7 +38,8 @@ try:
                             print(c0)
                             del c0,ci
                     del c
-                except Exception:pass
+            except Exception:
+                print('Error:', a, file=stderr)
 except KeyboardInterrupt:
     print('\nQuit')
 
