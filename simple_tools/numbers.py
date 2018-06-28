@@ -58,3 +58,15 @@ def factorial_primitive(x: int) -> int :
     result: int = 1
     for y in range(1, x + 1) : result *= y
     return result
+
+
+def product(*args: [float]) -> float :
+    """
+    Find the product of a list of float (or like) objects.
+    Return 1.0 with no arguments given.
+    :param args: [float] numbers
+    :return: float product
+    """
+    t: float = 1.0
+    for x in args : t *= x
+    return t
