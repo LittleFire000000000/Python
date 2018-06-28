@@ -67,6 +67,20 @@ def product(*args: [float]) -> float :
     :param args: [float] numbers
     :return: float product
     """
-    t: float = 1.0
-    for x in args : t *= x
-    return t
+    running_product: float = 1.0
+    for factor in args : running_product *= factor
+    return running_product
+
+
+def product_mean_deviance(*pairs: [(float, float)]) -> (float, float) :
+    """
+    Find the maximum and minimum products of the (mean, abs. deviance) pairs.
+    The maximum is given by the product of the means + their deviances.
+    The minimum is given by the product of the means - their deviances.
+    :param pairs: iterable of float (or like) pairs (tuples are best)
+    :return: tuple (maximum, minimum)
+    """
+    temp_adding_max, temp_subtracting_min = 1.0, 1.0
+    for a, b in pairs :
+        temp_adding_max, temp_subtracting_min = (a + b) * temp_adding_max, (a - b) * temp_subtracting_min
+    return temp_adding_max, temp_subtracting_min
