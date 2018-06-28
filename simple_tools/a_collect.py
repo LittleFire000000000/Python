@@ -176,12 +176,16 @@ def get_seed(prompt: str = 'Seed', minimum: int = 0, maximum: int = None) -> int
     return i_value
 
 
-def stop() :
+def stop(message: str = "Done", end: bool = True) :
     """
     Acknowledge program conclusion with user.
+    If end, call exit().
+    :param message: text to accompany the indication
+    :param end: whether to call exit()
     :return:
     """
-    input('Done.')
+    input(message + '. ')
+    if end : exit()
 
 
 def get_pad_length(v: int) -> int :
