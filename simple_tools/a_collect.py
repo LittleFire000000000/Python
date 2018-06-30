@@ -12,12 +12,12 @@ def file_named(file: int = 0) -> str :
     """
     Return ".out.txt" if file == 0 else ".out(file).txt".
     :param file: whole number
-    :return:  file naume
+    :return:  file name
     """
     return '.out.txt' if file == 0 else f'.out{file}.txt'
 
 
-def output(mode: str = 'r', file: int = 0) :
+def output(mode: str = 'r', file: int = 0) -> open :
     """
     Open ".out.txt" if file == 0 else ".out(file).txt", in mode mode+.
     :param mode: file mode
@@ -27,7 +27,7 @@ def output(mode: str = 'r', file: int = 0) :
     return open(file_named(file), mode + '+', encoding='utf-8')
 
 
-def output_entries(file, how_many: int) :
+def output_entries(file: open, how_many: int) :
     """
     Make a note that how_many entry(s) will exist in file file.
     :param file: file handle
@@ -37,7 +37,7 @@ def output_entries(file, how_many: int) :
     out_write_lines(file, f'Here are {how_many} entries.\n')
 
 
-def mark_file_help(file, note_text: str = "No documentation specified.", new_line: bool = True) :
+def mark_file_help(file: open, note_text: str = "No documentation specified.", new_line: bool = True) :
     """
     Add a helpful note to contextualise the data in file file (and an empty line thereafter if new_line).
     :param file: file handle
@@ -48,7 +48,7 @@ def mark_file_help(file, note_text: str = "No documentation specified.", new_lin
     out_write_line(file, note_text, new_lines=new_line)
 
 
-def out_write_lines(file, *lines: [str], new_lines: bool = True) :
+def out_write_lines(file: open, *lines: [str], new_lines: bool = True) :
     """
     Write multiple lines lines to file file, delineated by new-line characters if new_lines.
     :param file: file handle
@@ -62,19 +62,19 @@ def out_write_lines(file, *lines: [str], new_lines: bool = True) :
         file.writelines(x for x in lines)
 
 
-def out_write_line(file, line: str, *objs: [object], new_lines: bool = True) :
+def out_write_line(file: open, line: str, *objects: [object], new_lines: bool = True) :
     """
-    Write a line to file file.  If line is a format string, objs is its list of plug-in values.
+    Write a line to file file.  If line is a format string, objects is its list of plug-in values.
     If new_lines, delineate the lines with new-line characters.
     :param file: file handle
     :param line: text or format-string
-    :param objs: plug-in values
+    :param objects: plug-in values
     :param new_lines: whether to delineate
     :return:
     """
     tmp: str = ('\n' if new_lines else '')
-    if len(objs) :
-        file.writelines((line.format(*objs) + tmp,))
+    if len(objects) :
+        file.writelines((line.format(*objects) + tmp,))
     else :
         file.writelines((line + tmp,))
 
