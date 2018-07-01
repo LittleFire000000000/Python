@@ -27,6 +27,12 @@ def compound_interest(principle: float, rate: float, compounding: int, time: int
     return principle * (1 + rate / compounding) ** (time * compounding)
 
 
+def compound_interest2(present_value, annual_rate, periods_per_year, years) :
+    rate_per_period = annual_rate / periods_per_year
+    periods = periods_per_year * years
+    return present_value * (1 + rate_per_period) ** periods
+
+
 def simple_interest(principle: float, rate: float, time: int) -> float :
     """
     Give the compound interest with the numbers provided.
