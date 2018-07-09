@@ -722,5 +722,3 @@ Colors.get_color: Callable[[int], str] = lambda i : getattr(Colors, Colors.ALL[i
 Colors.get_color.__doc__ = """ In name order, give the name of the color with a given index. """
 Colors.get_number: Callable[[str], int] = lambda s : Colors.ALL.index(s)
 Colors.get_number.__doc__ = """ In name order, give the index of the color with a given name. """
-
-
