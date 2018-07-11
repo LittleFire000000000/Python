@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-class Mersenne_Lucas_Lehmer :
+class MersennePrimesLucasLehmer :
     # 2 ** p - 1 = m, p > 0
     power = 1
     mersenne = 1
@@ -49,7 +49,7 @@ class Mersenne_Lucas_Lehmer :
         return not self.lucas_number
 
 
-a = Mersenne_Lucas_Lehmer()
+a = MersennePrimesLucasLehmer()
 
 for x in range(2, 21) :
     a.set_power(x)
