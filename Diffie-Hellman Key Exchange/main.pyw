@@ -227,7 +227,6 @@ class InterBooleanVar(BooleanVar) :
 #
 
 
-
 def scramble(x: int) -> list :
     y = list(reversed(range(x)))
     for z in range(x) :
@@ -434,8 +433,8 @@ class DH :
         def prime_modulus_processing() :
             if self.prime_modulus_processing :
                 self.collection.get()['prime_processing_tmp'] = (
-                    '\nIN PROGRESS' + (
-                        ' ({})'.format(str(self.prime_modulus_try_count)) if self.prime_modulus_try_count else ''))
+                        '\nIN PROGRESS' + (
+                    ' ({})'.format(str(self.prime_modulus_try_count)) if self.prime_modulus_try_count else ''))
             else :
                 self.collection.get()['prime_processing_tmp'] = ''
         
@@ -449,8 +448,8 @@ class DH :
         def generator_processing() :
             if self.generator_processing :
                 self.collection.get()['generator_processing_tmp'] = (
-                    '\nIN PROGRESS' + (
-                        ' ({}%)'.format(str(self.generator_try_count)) if self.generator_try_count else ''))
+                        '\nIN PROGRESS' + (
+                    ' ({}%)'.format(str(self.generator_try_count)) if self.generator_try_count else ''))
             else :
                 self.collection.get()['generator_processing_tmp'] = ''
         
