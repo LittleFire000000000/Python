@@ -35,7 +35,7 @@ print('Started')
 
 with open('test sqrt.txt', 'w+') as of :
     for x in range(STOP) :
-        print(str(x) + '\r', end='', flush=True)  # indicate progress
+        print(str(x) + '\r', end='')  # indicate progress
         #
         a = x ** 2
         b = (x + 1) ** 2
@@ -62,6 +62,6 @@ with open('test sqrt.txt', 'w+') as of :
                 print(', error', file=of)
                 print('Error')
                 break
-print('\rConcluded'.ljust(len(str(STOP)), ' '), flush=True)  # indicate conclusion
+print('\rConcluded'.ljust(len(str(STOP)), ' '))  # indicate conclusion
 
 input('Press [Enter]. ')
