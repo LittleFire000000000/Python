@@ -270,9 +270,9 @@
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4919708" visible="true" weight="0.2419035" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3298969" />
-      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50033045" side_tool="true" visible="true" weight="0.4510949" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.3678832" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49966952" visible="true" weight="0.4510949" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50033045" side_tool="true" weight="0.4510949" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49966952" weight="0.3678832" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49966952" weight="0.4510949" />
       <window_info anchor="bottom" id="Version Control" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Python Console" order="9" weight="0.5334448" />
       <window_info id="Structure" order="1" sideWeight="0.5080292" side_tool="true" weight="0.2419035" />
@@ -308,6 +308,11 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/.." />
+    </ignored-roots>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
