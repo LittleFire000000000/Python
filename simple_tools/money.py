@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 from string import digits
 from enum import Enum, unique
-from copy import deepcopy
 
 """
 Functionalities related to American dollars
@@ -292,8 +291,8 @@ def digits_percentage(value: float) -> int :
     return 2 + len(str(value))  # 1+- 2% 3float
 
 
-conversion_d_constant_to_percentage: callable = lambda x : x / 100  # float to percent
-conversion_m_percentage_to_constant: callable = lambda x : x * 100  # float from percent
+conversion_m_constant_to_percentage: callable = lambda x : x * 100  # float to percent
+conversion_d_percentage_to_constant: callable = lambda x : x / 100  # float from percent
 
 
 # Classes
@@ -356,4 +355,6 @@ class Cycle :
         :return: int index
         """
         return self.__placeholder
+
+
 
