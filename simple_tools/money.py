@@ -304,15 +304,16 @@ class Cycle :
     __iterator_current: iter  # iterator from which to draw
     __iterator_raw: iter  # iterator from which to reset
     
-    def _iterate(self) :
+    def _iterate(self, give_stop: bool) :
         self.__placeholder += 1
         if self.__placeholder == 0 :
             self.__iterator_current = iter(self.__iterator_raw)
         try :
             yield next(self.__iterator_current)
         except StopIteration :
+            if give_stop : raise
             self.__placeholder = -1
-            yield from self._iterate()
+            yield from self._iterate(False)
     
     def __init__(self, an_iterable: iter) :
         """
@@ -342,12 +343,15 @@ class Cycle :
     
     # Iterate
     
-    def next(self) -> iter :
+    def next(self, give_stop: bool = False) -> iter :
         """
         Generator the cycle.
+        If give_stop is False, loop to the beginning of the cycle after conclusion,
+        If give_stop is True, raise StopIteration at the end of the Cycle, instead of looping.
+        :param give_stop: bool stop or loop
         :return: generator
         """
-        while True : yield next(self._iterate())
+        while True : yield next(self._iterate(give_stop))
     
     def get_iteration(self) -> int :
         """
@@ -355,6 +359,3 @@ class Cycle :
         :return: int index
         """
         return self.__placeholder
-
-
-
