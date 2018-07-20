@@ -14,6 +14,12 @@ title = "Diffie-Hellman Key Exchange"
 
 #
 def better_isqrt(i: int) -> int :  # Vedic Square Root Algorithm
+    """
+    Implement the Vedic Square Root Algorithm.
+    It's slower than math.sqrt(), but it's accurate.
+    :param i: whole number
+    :return: whole number
+    """
     x0 = str(i)
     if len(x0) % 2 : x0 = '0' + x0
     #

@@ -84,3 +84,47 @@ def product_mean_deviance(*pairs: [(float, float)]) -> (float, float) :
     for a, b in pairs :
         temp_adding_max, temp_subtracting_min = (a + b) * temp_adding_max, (a - b) * temp_subtracting_min
     return temp_adding_max, temp_subtracting_min
+
+
+def better_isqrt(i: int) -> int :  # Vedic Square Root Algorithm
+    """
+    Implement the Vedic Square Root Algorithm.
+    It's slower than math.sqrt(), but it's accurate.
+    :param i: whole number
+    :return: whole number
+    """
+    x0 = str(i)
+    if len(x0) % 2 : x0 = '0' + x0
+    #
+    divisor = 0
+    dropped = 0
+    bases = '0'
+    #
+    for y0 in range(0, len(x0), 2) :
+        dropped = int(str(dropped) + x0[y0 :y0 + 2])
+        affixed = 1
+        tmp = 0
+        while True :
+            y1 = (divisor * 10 + affixed) * affixed
+            if y1 > dropped :
+                affixed -= 1
+                y1 = tmp
+                break
+            affixed += 1
+            tmp = y1
+        dropped -= y1
+        bases += str(affixed)
+        divisor = int(bases) * 2
+    #
+    return int(bases)
+
+
+def is_sqrt(root_candidate: int, square: int) -> bool :
+    """
+    Test/verify whether the integral sq. rt. of square is root_candidate.
+    >>> root_candidate ** 2 <= square < (root_candidate + 1) ** 2
+    :param root_candidate:
+    :param square:
+    :return:
+    """
+    return root_candidate ** 2 <= square < (root_candidate + 1) ** 2

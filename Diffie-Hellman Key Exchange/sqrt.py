@@ -1,7 +1,13 @@
 #!/usr/bin/python3
 
 
-def better_isqrt(i: int) -> int :
+def better_isqrt(i: int) -> int :  # Vedic Square Root Algorithm
+    """
+    Implement the Vedic Square Root Algorithm.
+    It's slower than math.sqrt(), but it's accurate.
+    :param i: whole number
+    :return: whole number
+    """
     x0 = str(i)
     if len(x0) % 2 : x0 = '0' + x0
     #
@@ -31,37 +37,38 @@ def better_isqrt(i: int) -> int :
 LEN = 7
 STOP = 1_000
 
-print('Started')
-
-with open('test sqrt.txt', 'w+') as of :
-    for x in range(STOP) :
-        print(str(x) + '\r', end='')  # indicate progress
-        #
-        a = x ** 2
-        b = (x + 1) ** 2
-        for y in range(a, b) :
-            c = better_isqrt(y)
-            d = c * c
+if __name__ == '__main__' :
+    print('Started')
+    
+    with open('test sqrt.txt', 'w+') as of :
+        for x in range(STOP) :
+            print(str(x) + '\r', end='')  # indicate progress
             #
-            print(
-                str(y).rjust(LEN, '0'),
-                'yields',
-                str(c).rjust(LEN, '0'),
-                ', yielding square',
-                str(d).rjust(LEN, '0'),
-                ', from',
-                str(a).rjust(LEN, '0'),
-                ', to',
-                str(b).rjust(LEN, '0'),
-                end='',
-                file=of)
-            #
-            if a <= d < b :
-                print(',  fine', file=of)
-            else :
-                print(', error', file=of)
-                print('Error')
-                break
-print('\rConcluded'.ljust(len(str(STOP)), ' '))  # indicate conclusion
-
-input('Press [Enter]. ')
+            a = x ** 2
+            b = (x + 1) ** 2
+            for y in range(a, b) :
+                c = better_isqrt(y)
+                d = c * c
+                #
+                print(
+                    str(y).rjust(LEN, '0'),
+                    'yields',
+                    str(c).rjust(LEN, '0'),
+                    ', yielding square',
+                    str(d).rjust(LEN, '0'),
+                    ', from',
+                    str(a).rjust(LEN, '0'),
+                    ', to',
+                    str(b).rjust(LEN, '0'),
+                    end='',
+                    file=of)
+                #
+                if a <= d < b :
+                    print(',  fine', file=of)
+                else :
+                    print(', error', file=of)
+                    print('Error')
+                    break
+    print('\rConcluded'.ljust(len(str(STOP)), ' '))  # indicate conclusion
+    
+    input('Press [Enter]. ')
