@@ -25,6 +25,7 @@ def beat(x: int, y: int) -> bool:
     return (x + 2) % 3 == y
 
 print(not any((beat(a, b) ^ beats(a, b)) for a in (0, 1, 2) for b in (0, 1, 2)),
+      end='\n\n')
 
 winners: [int] = [0, 0, 0]
 
