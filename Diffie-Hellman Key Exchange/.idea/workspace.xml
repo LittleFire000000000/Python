@@ -153,6 +153,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -169,7 +170,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -301,21 +301,21 @@
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.24963072" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49312714" visible="true" weight="0.24237919" />
       <window_info id="Structure" order="1" sideWeight="0.48996654" weight="0.25650558" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3298969" />
-      <window_info anchor="bottom" id="Version Control" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.451505" />
-      <window_info anchor="bottom" id="Python Console" order="9" weight="0.5334448" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3685065" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39632106" />
       <window_info anchor="bottom" id="Terminal" order="10" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32954547" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.3685065" />
+      <window_info anchor="bottom" id="Version Control" order="8" show_stripe_button="false" />
       <window_info id="Favorites" order="2" sideWeight="0.5100334" side_tool="true" weight="0.25650558" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Python Console" order="9" weight="0.5334448" />
     </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -478,10 +478,10 @@
     <entry file="file://C:/Program Files/Python36/Lib/threading.py" />
     <entry file="file://C:/Program Files/Python36/Lib/tkinter/ttk.py" />
     <entry file="file://$PROJECT_DIR$/test sqrt.txt" />
-    <entry file="file://$PROJECT_DIR$/units/mersenne.py">
+    <entry file="file://$PROJECT_DIR$/units/pascal.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/units/pascal.py">
+    <entry file="file://$PROJECT_DIR$/units/mersenne.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/sqrt.py">
