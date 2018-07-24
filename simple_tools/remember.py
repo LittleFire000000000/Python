@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 from os.path import isfile
 from ast import parse as ast_parser
+from typing import Tuple, Union, Callable, Any
+
+import simple_tools.a_collect as a_collect
 
 
 class Error(Exception) :
@@ -33,11 +36,12 @@ class Memory(object) :
     __loaded = False
     __str_wrapping = False
     __force_type = True
+    __encoding = None
     __data_type = dict
     __memories = dict()
     __target = None
     
-    def __init__(self, mem, target, data_type=dict, force_type=True, string_wrap=False) :
+    def __init__(self, mem, target, data_type=dict, force_type=True, string_wrap=False, target_encoding='UTF-8') :
         """Specify a piece of data (No classes or functions that can not be properly represented) that can be initialized for "mem".
         Give a file name or None for "target" (Document) to target a file (If None is specified, be sure to invoke the target method later).
         Make sure "data_type" is the data type of "mem".
@@ -46,16 +50,18 @@ class Memory(object) :
             When the recall method is invoked, if the file already exists, this API will convert it's content into the data_type.
         The "string_wrap" feature allows the API to read documents of text as strings.
         "string_wrap" Must be a boolean value:
-            If True, the data_type of this API must be a string."""
+            If True, the data_type of this API must be a string.
+        The "target_encoding" is the encoding of the file being targeted."""
         
         assert isinstance(mem, data_type), "Takes only a {}.".format(type(data_type))
-        if not (target is None or isinstance(target, str)) : raise TargetError(
-            "\"Target\" Must be either a string or None.")
+        if not (target is None or isinstance(target, str)) :
+            raise TargetError("\"Target\" Must be either a string or None.")
         assert isinstance(string_wrap, bool), "\"string_wrap\" Must be a boolean value."
         self.__loaded = target not in (None, "")
         self.__memories = data_type()
         self.__data_type = data_type
         self.__force_type = force_type
+        self.__encoding = target_encoding
         self.set_string_wrapping_state(string_wrap)
         self.target(target)
         self.set_memories(mem)
@@ -427,6 +433,7 @@ class Memory(object) :
         if self.get_string_wrapping_state() and not self.get_type() is str :
             raise WrappingError("The data_type of this API must be set to a string.")
         if not self.get_type_enforcement_state() : return None
+        # noinspection PyTypeChecker
         return isinstance(self.get_memories(), self.get_type())
     
     def remember(self) :
@@ -434,12 +441,14 @@ class Memory(object) :
         
         ty = 0
         if self.get_target() not in (None, "") :
-            with open(self.get_target(), ("w" if isfile(self.get_target()) else "x+")) as mem :
+            with open(self.get_target(), ("w+" if isfile(self.get_target()) else "x+"),
+                      encoding=self.__encoding) as mem :
                 if not self.get_string_wrapping_state() :
                     ty = 1
                     mem.write(str(repr(self.get_memories())))
                 else :
                     ty = 2
+                    # noinspection PyTypeChecker
                     mem.write(self.get_memories())
         return ty
     
@@ -455,7 +464,7 @@ class Memory(object) :
                 ty = 9 + self.remember()
             else :
                 ty = 2
-                mem = open(self.get_target())
+                mem = open(self.get_target(), 'r+', encoding=self.__encoding)
                 a = mem.read()
                 try :
                     if not self.get_string_wrapping_state() :
@@ -470,13 +479,18 @@ class Memory(object) :
                                 b = repr(self.get_type()())
                             return b
                         
-                        self.set_memories(
-                            eval(safe(), {x : None for x in globals().keys()}, {x : None for x in locals().keys()}))
+                        s = safe()
+                        
+                        self.set_memories(eval(
+                            s,
+                            {x : None for x in globals().keys()},
+                            {x : None for x in locals().keys()}))
                     else :
                         ty = 5
                         self.set_memories(a)
                 except :
                     self.remember()
+                # noinspection PyTypeChecker
                 if not isinstance(self.get_memories(), self.get_type()) :
                     ty = 6
                     if self.get_type_enforcement_state() :
@@ -491,3 +505,68 @@ class Memory(object) :
                 if not ty in (7, 8) : mem.close()
                 del mem, a
         return ty
+
+
+def modify_recalled_parameter(initial: int, prompt: str, minimum: int = None, maximum: int = None,
+                              default_yes: bool = True) -> Tuple[int, Union[bool, None]] :
+    """
+    Modify a recalled value.  This is intended for use in conjunction with remember.Memory().
+    If initial is None, a new value is prompted and returned.
+    >>> return new()
+    The numeric bounds of a value are checked by evaluating:
+    >>> a_collect.is_within_bounds(initial, minimum, maximum)
+    If the bounds are met, it is prompted whether initial should be kept/renewed.
+    If it's kept, it's returned; otherwise, a new value is prompted and returned.
+    And finally, if the bounds weren't met, a new value is prompted and returned.
+    When prompting, if default_yes, just hitting [Enter] registers as a yes, else a no.
+    
+    The user indicator is:
+        True if the users signaled Yes,
+        False if the user signaled No,
+        None if the user didn't signal either
+    -
+    
+    :param initial: initial state of information
+    :param prompt: query for information
+    :param minimum: lower bound
+    :param maximum: upper bound
+    :param default_yes: bool
+    :return: tuple (modified state of information, user indicator)
+    """
+    
+    def new() :
+        nonlocal prompt, minimum, maximum
+        return a_collect.get_input_advanced(prompt, minimum=minimum, maximum=maximum)
+    
+    if initial is None :  # the initial value is unknown
+        return new(), None
+    elif a_collect.is_within_bounds(initial, minimum, maximum) :
+        prompt_yn: str = f'Should "{prompt}" stay {initial} [Y] or change [N]: '
+        
+        while True :
+            answer = input(prompt_yn).lower().strip()
+            if len(answer) :
+                answer = answer[0]
+                if answer in 'yes1' :
+                    answer = True
+                    break
+                elif answer in 'no0' :
+                    answer = False
+                    break
+                else :
+                    print('Unrecognized input.')
+            else :
+                answer = default_yes
+                break
+        
+        if answer :
+            return initial, True
+        else :
+            return new(), False
+    else :
+        return new(), None
+
+
+fields_to_recall: Callable[[object], int] = \
+    lambda obj : len(list(x for x in dir(obj) if not (x.startswith('_') or x.startswith('v_'))))
+fields_to_recall.__doc__ = """Give the number of (public) variables in a class or an object."""
