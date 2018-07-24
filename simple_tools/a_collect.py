@@ -120,6 +120,25 @@ def get_input(x: int = 0, prompt: str = 'Number of entries', input_processor: ca
             pass
 
 
+def is_within_bounds(candidate: int, minimum: int = None, maximum: int = None) -> bool :
+    """
+    Give whether a candidate is within an interval.
+    The interval [minimum, maximum] of integers are accepted.
+    A minimum of None represents -infinity as the minimum.
+    A maximum of None represents +infinity as the maximum.
+    :param candidate: int proposed
+    :param minimum: lower bound
+    :param maximum: upper bound
+    :return: bool candidate within interval
+    """
+    try :
+        if minimum is not None : assert candidate >= minimum
+        if maximum is not None : assert candidate <= maximum
+        return True
+    except :
+        return False
+
+
 def get_input_advanced(prompt: str = "Number of entries", minimum: int = 0, maximum: int = None,
                        input_processor: callable = int) -> int :
     """
@@ -138,11 +157,10 @@ def get_input_advanced(prompt: str = "Number of entries", minimum: int = 0, maxi
     while True :
         try :
             i_value: int = input_processor(input(prompt))
-            if minimum is not None : assert i_value >= minimum
-            if maximum is not None : assert i_value <= maximum
-            return i_value
         except :
-            pass
+            continue
+        if is_within_bounds(i_value, minimum, maximum) :
+            return i_value
 
 
 def get_seed(prompt: str = 'Seed', minimum: int = 0, maximum: int = None) -> int :
@@ -162,8 +180,7 @@ def get_seed(prompt: str = 'Seed', minimum: int = 0, maximum: int = None) -> int
     while True :
         try :
             i_value = int(input(prompt))
-            if minimum is not None : assert i_value >= minimum
-            if maximum is not None : assert i_value <= maximum
+            assert is_within_bounds(i_value, minimum, maximum)
             assert 0 <= i_value <= maxsize
             break
         except :
