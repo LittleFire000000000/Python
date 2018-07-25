@@ -570,3 +570,8 @@ def modify_recalled_parameter(initial: int, prompt: str, minimum: int = None, ma
 fields_to_recall: Callable[[object], int] = \
     lambda obj : len(list(x for x in dir(obj) if not (x.startswith('_') or x.startswith('v_'))))
 fields_to_recall.__doc__ = """Give the number of (public) variables in a class or an object."""
+
+fields_to_fill: Callable[[list, int, Any], None] = lambda given_list, expected_length, fill_value=None : \
+    given_list.extend(
+        [] if len(given_list) >= expected_length else ([fill_value] * (expected_length - len(given_list))))
+fields_to_fill.__doc__ = """Make sure a given_list is of at least the expected_length using fill_value to fill the missing length."""
