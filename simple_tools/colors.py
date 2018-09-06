@@ -2,7 +2,7 @@
 from typing import Union, Tuple, Iterable, Callable
 
 
-def hex_to_rgb(value: str) -> Tuple[int] :
+def hex_to_rgb(value: str) -> Tuple[int]:
     """
     Turn hex color value into RGB(A).
     :param value: string hex
@@ -10,10 +10,10 @@ def hex_to_rgb(value: str) -> Tuple[int] :
     """
     value = value.lstrip('#')
     lv = len(value)
-    return tuple(int(value[i :i + lv // 3], 16) for i in range(0, lv, lv // 3))
+    return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
 
 
-def rgb_to_hex(*rgba: Iterable[int]) -> str :
+def rgb_to_hex(*rgba: Iterable[int]) -> str:
     """
     Turn RGB(A) color rgba into hex.
     :param rgba: tuple int
@@ -22,14 +22,16 @@ def rgb_to_hex(*rgba: Iterable[int]) -> str :
     rgba = list(rgba)
     assert len(rgba) in (3, 4), \
         "Colors are a triplet of Red, Green, and Blue (and, possibly, an Alpha or transparency)."
-    for n, c in enumerate(rgba) :
-        if c < 0 : rgba[n] = 0
-        if c > 255 : rgba[n] = 255
+    for n, c in enumerate(rgba):
+        if c < 0:
+            rgba[n] = 0
+        if c > 255:
+            rgba[n] = 255
     return '#{:02x}{:02x}{:02x}{}'.format(rgba[0], rgba[1], rgba[2],
                                           '{:02x}'.format(rgba[3]) if len(rgba) > 3 else '').upper()
 
 
-def fade(r: int, g: int, b: int, fading: int = 0, get_hex: bool = False) -> Union[Tuple[int], str] :
+def fade(r: int, g: int, b: int, fading: int = 0, get_hex: bool = False) -> Union[Tuple[int], str]:
     """
     Dim a color (r, g, b) to (r - fading, g - fading, b - fading).
     :param r: int red
@@ -45,7 +47,7 @@ def fade(r: int, g: int, b: int, fading: int = 0, get_hex: bool = False) -> Unio
 
 
 def fade_alpha(r: int, g: int, b: int, a: int, fading: int = 0, get_hex: bool = False, simple: bool = False) -> \
-        Union[Tuple[int], str] :
+        Union[Tuple[int], str]:
     """
     If simple, dim a color (r, g, b, a) to (r - fading, g - fading, b - fading, a - fading).
     If not, dim a color (r, g, b, a) to (r, g, b, a - fading).
@@ -58,15 +60,15 @@ def fade_alpha(r: int, g: int, b: int, a: int, fading: int = 0, get_hex: bool = 
     :param simple: bool
     :return: tuple-int RGB if not get_hex else str hex
     """
-    if simple :
+    if simple:
         t: Tuple[int] = tuple((c - fading) for c in (r, g, b, a))
-    else :
+    else:
         t: Tuple[int] = tuple((r, g, b, a - fading))
     assert (min(t) >= 0 and max(t) <= 255), 'Color does not exist.'
     return t if not get_hex else rgb_to_hex(*t)
 
 
-class Colors :
+class Colors:
     """ Colors. Each color is a ( (red: int, green: int, blue: int), hex: str) tuple. """
     grey: ((int, int, int), str) = ((84, 84, 84), '#545454')
     grey_silver: ((int, int, int), str) = ((192, 192, 192), '#C0C0C0')
@@ -716,32 +718,32 @@ class Colors :
 
 Colors.ALL: Tuple[str] = tuple(x for x in dir(Colors) if not x.startswith('_'))
 # Colors.ALL.__doc__ = """ Names of all available colors in Colors. """
-Colors.is_color: Callable[[str], bool] = lambda s : s in Colors.ALL
+Colors.is_color: Callable[[str], bool] = lambda s: s in Colors.ALL
 Colors.is_color.__doc__ = """ Whether a given color's name is available in Colors. """
-Colors.get_color: Callable[[int], str] = lambda i : getattr(Colors, Colors.ALL[i])
+Colors.get_color: Callable[[int], str] = lambda i: getattr(Colors, Colors.ALL[i])
 Colors.get_color.__doc__ = """ In name order, give the name of the color with a given index. """
-Colors.get_number: Callable[[str], int] = lambda s : Colors.ALL.index(s)
+Colors.get_number: Callable[[str], int] = lambda s: Colors.ALL.index(s)
 Colors.get_number.__doc__ = """ In name order, give the index of the color with a given name. """
 
 
-def test_colors() :
+def test_colors():
     import simple_tools.reporter
     spi: simple_tools.reporter.Reporter = simple_tools.reporter.Reporter(256 ** 4)
     error = []
-    for r in range(256) :
-        for g in range(256) :
-            for b in range(256) :
-                for a in range(256) :
+    for r in range(256):
+        for g in range(256):
+            for b in range(256):
+                for a in range(256):
                     spi.add_step()
                     rgb = (r, g, b, a)
                     hx = rgb_to_hex(*rgb)
                     fhx = hex_to_rgb(hx)
-                    if not (rgb == fhx) :
+                    if not (rgb == fhx):
                         error.append([rgb, hx, fhx])
     spi.stop()
     print(error)
     input('Done ')
 
 
-if __name__ == '__main__' :
+if __name__ == '__main__':
     test_colors()
