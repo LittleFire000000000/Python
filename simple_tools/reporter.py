@@ -24,7 +24,7 @@ class Reporter:
 
     def __init__(self, total: int):
         self._value = 0
-        self._total = total
+        self._total = abs(total)
         self._previous_length = 0
         self._run = False
         self._value_lock = Lock()
@@ -62,9 +62,12 @@ class Reporter:
             if store.run:
                 break
             #
-            output_string: str = 'Progress: {} of {}, {}%' \
-                .format(store.step, store.total, store.step * 100 // store.total) \
-                .ljust(store.length)
+            output_string: str = \
+                ('Progress: {} of {}, {}%'
+                 .format(store.step, store.total, store.step * 100 // store.total)
+                 if store.total > 0 else
+                 ''
+                 ).ljust(store.length)
             store.length = len(output_string)
             print(f'\r{LOADING[store.index]} ' + output_string, end = '', flush = True)
             store.index += 1
