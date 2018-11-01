@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from typing import Iterable, Dict, Tuple, Union, Callable, Any
+from typing import Any, Callable, Dict, Iterable, Tuple, Union
 
 
 def switch_flat(
@@ -126,19 +126,46 @@ def switch(
         error: Tuple[Callable, Iterable[object]] = None
 ) -> Any:
     """ Invoke simple_flat(). """
-
-    def convert():
-        nonlocal parameter_trios
-        parameter_trios_iterator: iter = iter(parameter_trios)
-        yield next(parameter_trios_iterator)  # switch
-        for trio_or_pair in parameter_trios_iterator:
-            yield trio_or_pair[0]  # case
-            fxn: Callable = trio_or_pair[1]  # function
-            yield fxn
-            if isinstance(fxn, Callable):
-                yield trio_or_pair[2]  # args
-
-    return switch_flat(*convert(), default = default, error = error)
+    parameter_trios_iterable: iter = iter(parameter_trios)
+    try:
+        try:
+            switch_value = next(parameter_trios_iterable)  # get the switch value
+        except StopIteration:
+            raise AssertionError  # parameters are blank
+        # iterate over cases
+        for case_trio in parameter_trios_iterable:  # trio/pairs ahead
+            try:
+                case = case_trio[0]  # get case
+                fxn = case_trio[1]  # get fxn
+            except IndexError:
+                raise AssertionError
+            # function (trio) or constant (pair)
+            # compare
+            if switch_value == case:  # match
+                if isinstance(fxn, Callable):  # function
+                    try:
+                        args = case_trio[2]  # get arguments
+                    except IndexError:
+                        raise AssertionError
+                    if isinstance(args, Dict):  # dictionary
+                        return fxn(**args)
+                    elif isinstance(args, Iterable):  # other iterable
+                        return fxn(*args)
+                    else:  # single constant
+                        return fxn(args)
+                else:  # constant
+                    return fxn
+    except AssertionError:  # blank parameters
+        pass
+    except StopIteration:  # invalid length
+        raise ValueError
+    # base case
+    if default is not None:
+        return default[0](*default[1])
+    elif error is not None:
+        return error[0](*error[1])
+    else:
+        return None
 
 
 class SwitchTests:  # namespace
@@ -263,7 +290,7 @@ class SwitchTests:  # namespace
             print('Test 2.1.b returned ', cls.test2_switch_flat_print(4, error = False), '.', sep = '')
             print('Test 2.1.r returned ', cls.test2_switch_flat_print(4, default = False, error = False), '.', sep = '')
         except Exception as e:
-            print('Error 1', e)
+            print('Error 3', e)
         try:
             print('Testing grouped')
             print('Test 2.2.1 returned ', cls.test2_switch_print(), '.', sep = '')
@@ -276,7 +303,7 @@ class SwitchTests:  # namespace
             print('Test 2.2.b returned ', cls.test2_switch_print(4, error = False), '.', sep = '')
             print('Test 2.2.r returned ', cls.test2_switch_print(4, default = False, error = False), '.', sep = '')
         except Exception as e:
-            print('Error 2', e)
+            print('Error 4', e)
         print('Done Test 2\n')
 
     @classmethod
