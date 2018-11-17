@@ -248,6 +248,22 @@ def pad_value_int(value: int, pad: int, pad_char: str = ' ') -> str:
     return str(value).rjust(pad, pad_char)
 
 
+def pad_int_binary(value: int, pad: int, pad_char: str = '0', include_prefix: bool = False) -> str:
+    """
+    Right-justify the binary string of the integer value to pad-characters with the ch. pad_char.
+    If include_prefix, prepend the right-justified string with "0b".
+    :param value: integer
+    :param pad: length
+    :param pad_char: padding
+    :param include_prefix: bool
+    :return: string
+    """
+    tmp: str = bin(value)[2:].rjust(pad, pad_char)
+    if include_prefix:
+        tmp = '0b' + tmp
+    return tmp
+
+
 def pad_value_float(value: float, pad_int: int, pad_decimal: int, pad_char: str = ' ') -> str:
     """
     Right-justify the string of the float value's floor to pad_int-characters with the ch. pad_char;

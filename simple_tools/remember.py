@@ -581,7 +581,7 @@ def modify_recalled_parameter(initial: int, prompt: str, minimum: int = None, ma
     When prompting, if default_yes, just hitting [Enter] registers as a yes, else a no.
     
     The user indicator is:
-        True if the users signaled Yes,
+        True if the user signaled Yes,
         False if the user signaled No,
         None if the user didn't signal either
     -
