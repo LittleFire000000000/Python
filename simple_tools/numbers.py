@@ -127,6 +127,30 @@ def better_isqrt(i: int) -> int:  # Vedic Square Root Algorithm
     return int(bases)
 
 
+def better_fsqrt(x: int) -> int:
+    """
+    Implement a fast "bit-squaring" on x.
+    :param x: whole number
+    :return: whole number
+    """
+    r = 0
+    n = 1 << (x.bit_length() // 2)
+    while n:
+        td = r + n
+        t = x / td
+        if td > t:
+            n >>= 1
+            continue
+        r = td
+    return r
+
+
+def _test_sqrt(l: int, fxn: callable) -> [bool]:
+    for i in range(l):
+        for j in range(i ** 2, (i + 1) ** 2):
+            yield fxn(j) == i
+
+
 def is_sqrt(root_candidate: int, square: int) -> bool:
     """
     Test/verify whether the integral sq. rt. of square is root_candidate.
