@@ -1,34 +1,27 @@
 #!/usr/bin/python3
-from threading import Thread, Lock, local
+from threading import Lock, Thread
 from time import sleep
 
-LOADING: (str,) = ('|', '/', '-', '\\')
+LOADING: (str,) = ('[', '|', '/', '-', '\\', '|', ']')
 LOADING_LEN: int = len(LOADING)
 
 
-class Store(local):
-    index: int
-    run: bool
-    step: int
-    total: int
-    length: int
-
-
 class Reporter:
-    _value: int
-    _total: int
+    _step: int
     _previous_length: int
-    _run: bool
+    _total: int
+    _pause: float
+    _terminate: bool
     _value_lock: Lock
     _internal: Thread
 
-    def __init__(self, total: int):
-        self._value = 0
-        self._total = abs(total)
+    def __init__(self, total: int, pause: float = 0.5):
+        self._step = 0
         self._previous_length = 0
-        self._run = False
+        self._pause = pause
+        self._total = total
+        self._terminate = False
         self._value_lock = Lock()
-        #
         self._internal = Thread(target = self._runner, name = "Progress", daemon = True)
         self._internal.start()
 
@@ -36,85 +29,41 @@ class Reporter:
         self.stop()
 
     def stop(self):
-        self._value_lock.acquire()
-        if self._run:
-            self._value_lock.release()
-            return
-        self._run = True
-        self._value_lock.release()
-        #
+        with self._value_lock:
+            if self._terminate:
+                return
+            self._terminate = True
         self._internal.join()
-        #
-        self._value_lock.acquire()
         print('\r' + ' ' * self._previous_length + '\r', end = '', flush = True)
-        self._value_lock.release()
 
     def _runner(self):
-        store = Store()
-        store.index = 0
+        index = 0
+        vl = self._value_lock
         while True:
-            self._value_lock.acquire()
-            store.run = self._run
-            store.step = self._value
-            store.total = self._total
-            store.length = self._previous_length
-            self._value_lock.release()
-            if store.run:
-                break
-            #
-            output_string: str = \
-                ('Progress: {} of {}, {}%'
-                 .format(store.step, store.total, store.step * 100 // store.total)
-                 if store.total > 0 else
-                 ''
-                 ).ljust(store.length)
-            store.length = len(output_string)
-            print(f'\r{LOADING[store.index]} ' + output_string, end = '', flush = True)
-            store.index += 1
-            if store.index == LOADING_LEN:
-                store.index = 0
-            sleep(.5)
-            #
-            self._value_lock.acquire()
-            self._previous_length = store.length
-            self._value_lock.release()
+            with vl:
+                if self._terminate:
+                    break
+                total = self._total
+                output_string: str = f'{LOADING[index]} <{self._step} / {total} ({self._step // total if total != 0 else "-"}%)>.'
+                print('\r' + output_string.ljust(self._previous_length), end = '', flush = True)
+                index = (index + 1) if index < LOADING_LEN else 0
+                self._previous_length = len(output_string)
+                pause = self._pause
+            sleep(pause)
         return
 
     def is_running(self) -> bool:
-        tmp = local()
-        self._value_lock.acquire()
-        tmp.run = self._run
-        self._value_lock.release()
-        return not tmp.run
-
-    def get_total(self) -> int:
-        tmp = local()
-        self._value_lock.acquire()
-        tmp.total = self._total
-        self._value_lock.release()
-        return tmp.total
+        with self._value_lock:
+            return not self._terminate
 
     def get_step(self) -> int:
-        tmp = local()
-        self._value_lock.acquire()
-        tmp.step = self._value
-        self._value_lock.release()
-        return tmp.step
+        with self._value_lock:
+            return self._step
 
     def set_step(self, step: int = 0):
-        Thread(target = self._set_step, name = "Setter", args = (self, step), daemon = True).start()
-
-    @staticmethod
-    def _set_step(self, step: int):
-        self._value_lock.acquire()
-        self._value = step
-        self._value_lock.release()
+        with self._value_lock:
+            self._step = step
 
     def add_step(self, steps: int = 1):
-        Thread(target = self._add_step, name = "Adder", args = (self, steps), daemon = True).start()
-
-    @staticmethod
-    def _add_step(self, steps: int):
-        self._value_lock.acquire()
-        self._value += steps
-        self._value_lock.release()
+        with self._value_lock:
+            self._step += steps
