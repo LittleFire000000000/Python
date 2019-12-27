@@ -3,30 +3,25 @@ from threading import Lock, Thread
 from time import sleep
 
 LOADING: (str,) = ('[', '|', '/', '-', '\\', '|', ']')
-LOADING_LEN: int = len(LOADING)
+LOADING_LENGTH_MINUS_ONE: int = len(LOADING) - 1
 
 
 class Reporter:
     _step: int
     _previous_length: int
-    _total: int
     _pause: float
     _terminate: bool
     _value_lock: Lock
     _internal: Thread
 
-    def __init__(self, total: int, pause: float = 0.5):
+    def __init__(self, pause: float):
         self._step = 0
         self._previous_length = 0
         self._pause = pause
-        self._total = total
         self._terminate = False
         self._value_lock = Lock()
         self._internal = Thread(target = self._runner, name = "Progress", daemon = True)
         self._internal.start()
-
-    def __del__(self):
-        self.stop()
 
     def stop(self):
         with self._value_lock:
@@ -43,10 +38,9 @@ class Reporter:
             with vl:
                 if self._terminate:
                     break
-                total = self._total
-                output_string: str = f'{LOADING[index]} <{self._step} / {total} ({self._step // total if total != 0 else "-"}%)>.'
+                output_string: str = f'{LOADING[index]} <{self._step}>.'
                 print('\r' + output_string.ljust(self._previous_length), end = '', flush = True)
-                index = (index + 1) if index < LOADING_LEN else 0
+                index = (index + 1) if index < LOADING_LENGTH_MINUS_ONE else 0
                 self._previous_length = len(output_string)
                 pause = self._pause
             sleep(pause)
