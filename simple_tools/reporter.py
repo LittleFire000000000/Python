@@ -2,7 +2,7 @@
 from threading import Lock, Thread
 from time import sleep
 
-LOADING: (str,) = ('[', '|', '/', '-', '\\', '|', ']')
+LOADING: str = '[|/-\\|]_{^*v*<*>*}'
 LOADING_LENGTH_MINUS_ONE: int = len(LOADING) - 1
 
 

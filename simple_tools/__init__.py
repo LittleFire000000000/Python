@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 
-"""
-Enable library import
-"""
+"""Enable library import"""
 
 from .a_collect import *
 from .money import *  # censored

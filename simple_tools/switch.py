@@ -179,17 +179,8 @@ class SwitchTests:  # namespace
             print(*args)
             return args[1]
 
-        a: [] = \
-            list(s) + [
-                0, printer, ['Zero', 0],
-                1, printer, ['One', 1],
-                2, printer, ['Two', 2],
-                3, printer, ['Three', 3]
-            ] if len(s) == 1 else []
-        return switch_flat(
-            *a,
-            default = (p, ('Default',)) if default else None,
-            error = (p, ('Error',)) if error else None)
+        a: [] = list(s) + [0, printer, ['Zero', 0], 1, printer, ['One', 1], 2, printer, ['Two', 2], 3, printer, ['Three', 3]] if len(s) == 1 else []
+        return switch_flat(*a, default = (p, ('Default',)) if default else None, error = (p, ('Error',)) if error else None)
 
     @staticmethod
     def test1_switch_print(*s: [int], default: bool = True, error: bool = True):
@@ -201,17 +192,8 @@ class SwitchTests:  # namespace
             print(*args)
             return args[1]
 
-        a: [] = \
-            list(s) + [
-                (0, printer, ['Zero', 0]),
-                (1, printer, ['One', 1]),
-                (2, printer, ['Two', 2]),
-                (3, printer, ['Three', 3])
-            ] if len(s) == 1 else []
-        return switch(
-            *a,
-            default = (p, ('Default',)) if default else None,
-            error = (p, ('Error',)) if error else None)
+        a: [] = list(s) + [(0, printer, ['Zero', 0]), (1, printer, ['One', 1]), (2, printer, ['Two', 2]), (3, printer, ['Three', 3])] if len(s) == 1 else []
+        return switch(*a, default = (p, ('Default',)) if default else None, error = (p, ('Error',)) if error else None)
 
     @classmethod
     def test1_switch(cls):
@@ -246,34 +228,15 @@ class SwitchTests:  # namespace
     @staticmethod
     def test2_switch_flat_print(*s, default: bool = True, error: bool = True):
         assert len(s) < 2
-
         p: Callable[[Tuple], Iterable[str]] = lambda *st: st
-
-        a: [] = \
-            list(s) + [
-                0, ['Zero', 0],
-                1, ['One', 1],
-                2, ['Two', 2],
-                3, ['Three', 3]
-            ] if len(s) == 1 else []
-        return switch_flat(
-            *a,
-            default = (p, ('Default',)) if default else None,
-            error = (p, ('Error',)) if error else None)
+        a: [] = list(s) + [0, ['Zero', 0], 1, ['One', 1], 2, ['Two', 2], 3, ['Three', 3]] if len(s) == 1 else []
+        return switch_flat(*a, default = (p, ('Default',)) if default else None, error = (p, ('Error',)) if error else None)
 
     @staticmethod
     def test2_switch_print(*s, default: bool = True, error: bool = True):
         assert len(s) < 2
-
         p: Callable[[Tuple], Iterable[str]] = lambda *st: st
-
-        a: [] = \
-            list(s) + [
-                (0, ['Zero', 0]),
-                (1, ['One', 1]),
-                (2, ['Two', 2]),
-                (3, ['Three', 3])
-            ] if len(s) == 1 else []
+        a: [] = list(s) + [(0, ['Zero', 0]), (1, ['One', 1]), (2, ['Two', 2]), (3, ['Three', 3])] if len(s) == 1 else []
         return switch(*a, default = (p, ('Default',)) if default else None, error = (p, ('Error',)) if error else None)
 
     @classmethod

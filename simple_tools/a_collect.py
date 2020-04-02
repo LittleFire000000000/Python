@@ -1,11 +1,8 @@
 #!/usr/bin/python3
 from math import log10
 from random import randrange, seed
-from sys import maxsize
 
-"""
-Utility functions.
-"""
+"""Utility functions."""
 
 
 def file_named(file: int = 0) -> str:
@@ -32,7 +29,6 @@ def output_entries(file: open, how_many: int):
     Make a note that how_many entry(s) will exist in file file.
     :param file: file handle
     :param how_many: number of entries
-    :return:
     """
     out_write_lines(file, f'Here are {how_many} entries.\n')
 
@@ -43,7 +39,6 @@ def mark_file_help(file: open, note_text: str = "No documentation specified.", n
     :param file: file handle
     :param note_text: string of documentation
     :param new_line: whether to add a new line
-    :return:
     """
     out_write_line(file, note_text, new_lines = new_line)
 
@@ -54,7 +49,6 @@ def out_write_lines(file: open, *lines: [str], new_lines: bool = True):
     :param file: file handle
     :param lines: lines of text
     :param new_lines: whether to delineate
-    :return:
     """
     if new_lines:
         file.writelines(x + '\n' for x in lines)
@@ -70,7 +64,6 @@ def out_write_line(file: open, line: str, *objects: [object], new_lines: bool = 
     :param line: text or format-string
     :param objects: plug-in values
     :param new_lines: whether to delineate
-    :return:
     """
     tmp: str = ('\n' if new_lines else '')
     if len(objects):
@@ -88,7 +81,6 @@ def out_sort(sort: bool = True, reverse: bool = False, number_entries: int = Non
     :param reverse: sorting order
     :param number_entries: optional entry/projected-count
     :param file: whole number
-    :return:
     """
     with output('r', file) as inf:
         tmp: [str] = inf.readlines()
@@ -103,23 +95,25 @@ def out_sort(sort: bool = True, reverse: bool = False, number_entries: int = Non
         of.writelines(tmp)
 
 
-def get_input(x: int = 0, prompt: str = 'Number of entries', input_processor: callable = int) -> int:
+def get_input(input_0: int = 0, prompt: str = 'Number of entries', input_processor: callable = int, add_collin: bool = True) -> int:
     """
-    Get an integral number from console, offset by x, giving the text prompt prompt. Prompt should omit its collin.
+    Get an integral number (>0) from console, offset by input_0, giving the text prompt. Prompt should omit its collin if add_collin.
     The input_processor takes the raw input and converts it into something useful (int by default).
-    :param x: offset
+    TypeErrors and AssertionErrors are ignored.
+    :param input_0: offset
     :param prompt: string
     :param input_processor: callable object
+    :param add_collin: append ": " onto prompt
     :return: integer (by default)
     """
-    prompt += ': '
+    if add_collin:
+        prompt += ': '
     while True:
-        # noinspection PyBroadException
         try:
             i_value: int = input_processor(input(prompt))
             assert i_value > 0
-            return i_value + x
-        except Exception:
+            return i_value + input_0
+        except (TypeError, AssertionError):
             pass
 
 
@@ -134,19 +128,17 @@ def is_within_bounds(candidate: int, minimum: int = None, maximum: int = None) -
     :param maximum: upper bound
     :return: bool candidate within interval
     """
-    # noinspection PyBroadException
     try:
         if minimum is not None:
             assert candidate >= minimum
         if maximum is not None:
             assert candidate <= maximum
         return True
-    except Exception:
+    except AssertionError:
         return False
 
 
-def get_input_advanced(prompt: str = "Number of entries", minimum: int = 0, maximum: int = None,
-                       input_processor: callable = int) -> int:
+def get_input_advanced(prompt: str = "Number of entries", minimum: int = 0, maximum: int = None, input_processor: callable = int, add_collin: bool = True) -> int:
     """
     Get an integer from the console, with the prompt prompt. Prompt should omit its collin.
     The interval [minimum, maximum] of integers are accepted.
@@ -157,47 +149,51 @@ def get_input_advanced(prompt: str = "Number of entries", minimum: int = 0, maxi
     :param minimum: integer or None
     :param maximum: integer or None
     :param input_processor: callable object
+    :param add_collin: append ": " onto prompt
     :return: integer (by default)
     """
-    prompt += ': '
+    if add_collin:
+        prompt += ': '
     while True:
-        # noinspection PyBroadException
         try:
             i_value: int = input_processor(input(prompt))
-        except Exception:
+        except AssertionError:
             continue
         if is_within_bounds(i_value, minimum, maximum):
             return i_value
 
 
-def get_seed(prompt: str = 'Seed', minimum: int = 0, maximum: int = None) -> int:
+def get_seed(prompt: str = 'Seed', minimum: int = 0, maximum: int = None, add_collin: bool = True, seed_bit_length: int = 10_000, seed_fxn: callable = seed) -> int:
     """
     Get an integer from the console, with the prompt prompt. Prompt should omit its collin.
     If the integer is zero, random.seed() is reseeded randomly.
     If the integer is above zero, random.seed() is reseeded with the integer.
     The interval [minimum, maximum] of integers are accepted.
     A minimum of None represents 0 as the minimum.
-    A maximum of None represents sys.maxsize as the maximum.
+    A maximum of None represents [0, 1 << (seed_bit_length + 1) - 1] as the maximum.
+    The seed_fxn is called with the new seed (random.seed by default)
     :param prompt: string
     :param minimum: whole number or None
     :param maximum: whole number or None
-    :return: integer
+    :param add_collin: append ": " onto prompt
+    :param seed_bit_length: number of bits (max inclusive) in seed
+    :param seed_fxn: randomness seed setter
+    :return: set seed
     """
-    prompt += ': '
+    if add_collin:
+        prompt += ': '
     while True:
-        # noinspection PyBroadException
         try:
             i_value = int(input(prompt))
             assert is_within_bounds(i_value, minimum, maximum)
-            assert 0 <= i_value <= maxsize
+            assert 0 <= i_value and i_value.bit_length() <= seed_bit_length
             break
-        except Exception:
+        except (TypeError, AssertionError):
             pass
-    #
     i_value = abs(i_value)
     if i_value == 0:
-        i_value = randrange(maxsize)
-    seed(i_value)
+        i_value = randrange(1 << (seed_bit_length + 1))
+    seed_fxn(i_value)
     return i_value
 
 
@@ -207,7 +203,6 @@ def stop(message: str = "Done", end: bool = True):
     If end, call exit().
     :param message: text to accompany the indication
     :param end: whether to call exit()
-    :return:
     """
     input(message + '. ')
     if end:

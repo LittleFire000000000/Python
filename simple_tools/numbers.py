@@ -1,10 +1,7 @@
 #!/usr/bin/python3
-from math import sqrt, floor
+from math import floor, sqrt
 
-"""
-Stuff about numbers.
-Common operations.
-"""
+"""Stuff about numbers. Common operations."""
 
 
 def primitive_period(base: int, modulo: int, remainder: int = 1) -> int:
@@ -48,10 +45,8 @@ def is_prime_primitive(x: int) -> bool:
     """
     if x < 2:
         return False
-    for y in range(2, int(floor(sqrt(x)) + 1)):
-        if x % y == 0:
-            return False
-    return True
+
+    return not any(x % y == 0 for y in range(2, int(floor(sqrt(x)) + 1)))
 
 
 def factorial_primitive(x: int) -> int:
@@ -103,11 +98,9 @@ def better_isqrt(i: int) -> int:  # Vedic Square Root Algorithm
     x0 = str(i)
     if len(x0) % 2:
         x0 = '0' + x0
-    #
     divisor = 0
     dropped = 0
     bases = '0'
-    #
     for y0 in range(0, len(x0), 2):
         dropped = int(str(dropped) + x0[y0:y0 + 2])
         affixed = 1
@@ -123,7 +116,6 @@ def better_isqrt(i: int) -> int:  # Vedic Square Root Algorithm
         dropped -= y1
         bases += str(affixed)
         divisor = int(bases) * 2
-    #
     return int(bases)
 
 
@@ -133,20 +125,32 @@ def better_fsqrt(x: int) -> int:
     :param x: whole number
     :return: whole number
     """
-    r = 0
-    n = 1 << (x.bit_length() // 2)
-    while n:
-        td = r + n
-        t = x / td
-        if td > t:
-            n >>= 1
+    root_found = 0
+    attempt_bit = 1 << (x.bit_length() // 2)
+    while attempt_bit:
+        new_root = root_found + attempt_bit
+        if (x / new_root) < new_root:
+            attempt_bit >>= 1
             continue
-        r = td
-    return r
+        root_found = new_root
+    return root_found
 
 
-def _test_sqrt(l: int, fxn: callable) -> [bool]:
-    for i in range(l):
+def better_root(x: int, root: int) -> int:
+    """"""
+    found_root = 0
+    attempt_bit = 1 << (1 + x.bit_length() // root)
+    while attempt_bit:
+        new_root = found_root + attempt_bit
+        if x < new_root ** root:
+            attempt_bit >>= 1
+            continue
+        found_root = new_root
+    return found_root
+
+
+def _test_sqrt(up_to: int, fxn: callable) -> [bool]:
+    for i in range(up_to):
         for j in range(i ** 2, (i + 1) ** 2):
             yield fxn(j) == i
 
@@ -155,8 +159,7 @@ def is_sqrt(root_candidate: int, square: int) -> bool:
     """
     Test/verify whether the integral sq. rt. of square is root_candidate.
     >>> root_candidate ** 2 <= square < (root_candidate + 1) ** 2
-    :param root_candidate:
-    :param square:
-    :return:
+    :param root_candidate: natural
+    :param square: natural
     """
     return root_candidate ** 2 <= square < (root_candidate + 1) ** 2

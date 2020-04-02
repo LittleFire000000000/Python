@@ -1,10 +1,9 @@
 #!/usr/bin/python3
+from enum import IntEnum, unique
 from string import digits
-from enum import Enum, unique
+from typing import Union
 
-"""
-Functionalities related to American dollars
-"""
+"""Functionalities related to American dollars."""
 
 CM_DIGITS: str = ',' + digits  # [0, 10) and a comma
 FREE_PASS: callable = lambda *_: True  #
@@ -50,21 +49,21 @@ class IdSmugglerBase:
     Made for easy ID generation.
     """
     __id: int
-    
+
     def __init__(self, starting_point: int = 0):
         """
         Setup this ID slot with the first ID being starting_point.
         :param starting_point: whole number
         """
         self.__id = starting_point
-    
+
     def get_id(self) -> int:
         """
         Get the next ID pending assignment/ready to use.
         :return: int ID
         """
         return self.__id
-    
+
     def next_id(self) -> int:
         """
         Get-to-use the next ID pending assignment/ready to use.
@@ -73,21 +72,18 @@ class IdSmugglerBase:
         tmp: int = self.__id
         self.advance_id()
         return tmp
-    
+
     def advance_id(self, number_of_times: int = 1):
         """
         Prepare the number_of_times-ahead ID for assignment.
         :param number_of_times: natural number
-        :return:
-        """
+    """
         self.__id += number_of_times
         return
 
 
 class IdSmuggler:
-    """
-    Issue ID numbers from 0 on easily.
-    """
+    """Issue ID numbers from 0 on easily."""
     MONEY_PARSING_ERRORS = IdSmugglerBase()
     PERCENTAGE_PARSING_ERRORS = IdSmugglerBase()
     MONEY_ACCOUNT_IDS = IdSmugglerBase()
@@ -97,10 +93,8 @@ class IdSmuggler:
 
 # Representations
 @unique
-class MoneyParsingErrors(Enum):
-    """
-    Error indicators for is_money().
-    """
+class MoneyParsingErrors(IntEnum):
+    """Error indicators for is_money()."""
     NO_ERROR = IdSmuggler.MONEY_PARSING_ERRORS.next_id()
     TOO_SHORT = IdSmuggler.MONEY_PARSING_ERRORS.next_id()
     SIGNAGE_MISSING = IdSmuggler.MONEY_PARSING_ERRORS.next_id()
@@ -111,7 +105,7 @@ class MoneyParsingErrors(Enum):
     MISPLACED_COMMA = IdSmuggler.MONEY_PARSING_ERRORS.next_id()
     ABSENT_COMMA = IdSmuggler.MONEY_PARSING_ERRORS.next_id()
     UNRECOGNIZED_DIGIT = IdSmuggler.MONEY_PARSING_ERRORS.next_id()
-    
+
     @staticmethod
     def is_error(x) -> bool:
         """
@@ -128,7 +122,7 @@ class MoneyParsingErrors(Enum):
                 return False
             return True
         return False
-    
+
     @staticmethod
     def longest() -> int:
         """
@@ -141,17 +135,16 @@ class MoneyParsingErrors(Enum):
         return 41
 
 
-class PercentageParsingErrors(Enum):
-    """
-    Error indicators for is_percentage().
-    """
+@unique
+class PercentageParsingErrors(IntEnum):
+    """ Error indicators for is_percentage()."""
     NO_ERROR = IdSmuggler.PERCENTAGE_PARSING_ERRORS.next_id()
     TOO_SHORT = IdSmuggler.PERCENTAGE_PARSING_ERRORS.next_id()
     SIGNAGE_MISSING = IdSmuggler.PERCENTAGE_PARSING_ERRORS.next_id()
     PERCENT_SIGN_MISSING = IdSmuggler.PERCENTAGE_PARSING_ERRORS.next_id()
     DECIMAL_POINT_MISSING = IdSmuggler.PERCENTAGE_PARSING_ERRORS.next_id()
     MALFORMATION_IN_FLOAT = IdSmuggler.PERCENTAGE_PARSING_ERRORS.next_id()
-    
+
     @staticmethod
     def is_error(x) -> bool:
         """
@@ -168,7 +161,7 @@ class PercentageParsingErrors(Enum):
                 return False
             return True
         return False
-    
+
     @staticmethod
     def longest() -> int:
         """
@@ -181,7 +174,7 @@ class PercentageParsingErrors(Enum):
         return 45
 
 
-def is_money(string: str):
+def is_money(string: str) -> Union[float, MoneyParsingErrors]:
     """
     Take a formal dollar-value string string and, if possible, return the dollar value in decimal that it represents.
     If not, return MoneyParsingErrors.
@@ -213,7 +206,6 @@ def is_money(string: str):
         return MoneyParsingErrors.SECOND_DIGIT_MALFORMED  # first digit of cents
     cents: str = temporary[1] + temporary[0]  # get cents
     del temporary[0:3]  # clear cents and decimal point to process dollars
-    #
     if temporary[0] == ',':  # a comma cannot follow (right to left) the decimal point
         return MoneyParsingErrors.MISPLACED_COMMA  # the comma would be misplace
     place: int = 0  # initiate a parsing cycle for placing commas and digits
@@ -285,10 +277,9 @@ def is_percentage(string: str):
         return PercentageParsingErrors.PERCENT_SIGN_MISSING
     if '.' not in string:
         return PercentageParsingErrors.DECIMAL_POINT_MISSING
-    # noinspection PyBroadException
     try:
         return (-1 if string[0] == '-' else 1) * float(string[1:-1])
-    except Exception:
+    except IndexError:
         return PercentageParsingErrors.MALFORMATION_IN_FLOAT
 
 
@@ -316,13 +307,11 @@ conversion_d_percentage_to_constant: callable = lambda x: x / 100  # float from 
 
 # Classes
 class Cycle:
-    """
-    Cycle through an iterable.
-    """
+    """Cycle through an iterable."""
     __placeholder: int  # index
     __iterator_current: iter  # iterator from which to draw
     __iterator_raw: iter  # iterator from which to reset
-    
+
     def _iterate(self, give_stop: bool):
         self.__placeholder += 1
         if self.__placeholder == 0:
@@ -334,35 +323,34 @@ class Cycle:
                 raise
             self.__placeholder = -1
             yield from self._iterate(False)
-    
+
     def __init__(self, an_iterable: iter):
         """
         Declare a new cycle.
         :param an_iterable: an iterable object
         """
         self.give_iterable(an_iterable)
-    
+
     # Setup
-    
+
     def give_iterable(self, iterable: iter):
         """
         Set the cycle with which to operate.
         :param iterable: any iterable
-        :return:
         """
         self.__placeholder = -1
         self.__iterator_raw = iterable
         return
-    
+
     def retrieve_iterable(self) -> iter:
         """
         Retrieve the cycle with which this generator is operating.
         :return: an iterable
         """
         return self.__iterator_raw
-    
+
     # Iterate
-    
+
     def next(self, give_stop: bool = False) -> iter:
         """
         Generator the cycle.
@@ -373,7 +361,7 @@ class Cycle:
         """
         while True:
             yield next(self._iterate(give_stop))
-    
+
     def get_iteration(self) -> int:
         """
         What is the index of the item in the cycle currently observed.
